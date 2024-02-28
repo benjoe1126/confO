@@ -2,7 +2,6 @@ package mapping
 
 import (
 	"confdecl/conf"
-	"fmt"
 	"gopkg.in/yaml.v2"
 	"os"
 )
@@ -12,8 +11,15 @@ type Conf interface {
 }
 
 type CiscoConf struct {
-	Interfaces []conf.Interface `yaml:"interfaces,flow"`
+	Interfaces []conf.Interface `yaml:"interfaces,omitempty"`
 	ACLs       []conf.ACL       `yaml:"ACLS,omitempty"`
+}
+
+func (c *CiscoConf) AddIface(i conf.Interface) {
+	c.Interfaces = append(c.Interfaces, i)
+}
+func (c *CiscoConf) AddAcl(a conf.ACL) {
+	c.ACLs = append(c.ACLs, a)
 }
 
 func (c *CiscoConf) ReadConf(fileName string) error {
@@ -25,7 +31,6 @@ func (c *CiscoConf) ReadConf(fileName string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Print(c)
 	return nil
 
 }

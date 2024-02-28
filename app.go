@@ -2,6 +2,7 @@ package main
 
 import (
 	"confdecl/conf"
+	"confdecl/mapping"
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"os"
@@ -45,9 +46,15 @@ func main() {
 	g1.AddIpv4(ipv4)
 	//cnf2, _ := g1.Configure()
 	//fmt.Println(cnf)
-	out, err := yaml.Marshal(g0)
+	cconf := mapping.CiscoConf{}
+	cconf.AddIface(g0)
+	cconf.AddIface(g1)
+	out, err := yaml.Marshal(cconf)
 	if err != nil {
 		fmt.Errorf("%w", err)
 	}
 	fmt.Println(string(out))
+	ciscoConf := mapping.CiscoConf{}
+	ciscoConf.ReadConf("example.yaml")
+	fmt.Println(ciscoConf.Interfaces[0].Ipv4Addresses[0])
 }

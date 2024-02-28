@@ -49,10 +49,10 @@ func inter(str string) (string, bool) {
 }
 
 type IPv4Addr struct {
-	Addr         string `yaml:"Addr"`
+	Addr         string `yaml:"addr"`
 	_addrNumeric uint32
 	Netmask      string `yaml:"mask"`
-	Prefix       int    `yaml:"Prefix"`
+	Prefix       int    `yaml:"prefix"`
 }
 
 func (ip IPv4Addr) Print() {
@@ -89,7 +89,7 @@ func NewIpv4(addr string, netmask string) (IPv4Addr, error) {
 
 type IPv6Addr struct {
 	Addr         string `yaml:"ipv6addr"`
-	_addrNumeric [2]int64
+	_addrNumeric [2]uint64
 	prefix       int8 `yaml:"prefix"`
 }
 
@@ -98,6 +98,32 @@ func (i *IPv6Addr) assign() (string, bool) {
 		return fmt.Sprintf("ipv6 address %s/%d", i.Addr, i.prefix), true
 	}
 	return "", false
+}
+
+func NewIPv6Addr(addr string, prefixlen int8) (IPv6Addr, error) {
+	addrSplt := strings.Split(addr, ":")
+	var num1 uint64 = 0
+	var num2 uint64 = 0
+	for i := 0; 4 > i; i++ {
+		num, err := strconv.ParseUint(addrSplt[i], 10, 16)
+		if err != nil {
+			return IPv6Addr{}, err
+		}
+		num_2, err := strconv.ParseUint(addrSplt[i+4], 10, 16)
+		if err != nil {
+			return IPv6Addr{}, err
+		}
+		num1 += num
+		num1 = num1 << 16
+		num2 += num_2
+		num2 = num2 << 16
+
+	}
+	return IPv6Addr{
+		Addr:         addr,
+		_addrNumeric: [2]uint64{num1, num2},
+		prefix:       prefixlen,
+	}, nil
 }
 
 type Interface struct {
