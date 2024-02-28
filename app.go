@@ -3,6 +3,7 @@ package main
 import (
 	"confdecl/conf"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"os"
 )
 
@@ -37,14 +38,16 @@ func main() {
 	ipv4, _ := conf.NewIpv4("192.168.1.1", "255.255.255.0")
 	g0.AddIpv4(ipv4)
 	ivp4_2, _ := conf.NewIpv4("172.16.0.6", "255.252.0.0")
-	ivp4_2.Print()
 	g0.AddIpv4(ivp4_2)
-	cnf, _ := g0.Configure()
+	//cnf, _ := g0.Configure()
 	g1 := conf.NewInterface("g0/0/1")
 	ipv4, _ = conf.NewIpv4("10.0.0.24", "255.0.0.0")
 	g1.AddIpv4(ipv4)
-	cnf2, _ := g1.Configure()
-	fmt.Println(cnf)
-	fmt.Println(cnf2)
-	fmt.Print(commands[0])
+	//cnf2, _ := g1.Configure()
+	//fmt.Println(cnf)
+	out, err := yaml.Marshal(g0)
+	if err != nil {
+		fmt.Errorf("%w", err)
+	}
+	fmt.Println(string(out))
 }

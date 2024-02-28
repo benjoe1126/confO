@@ -49,18 +49,18 @@ func inter(str string) (string, bool) {
 }
 
 type IPv4Addr struct {
-	addr         string
+	Addr         string `yaml:"Addr"`
 	_addrNumeric uint32
-	netmask      string
-	prefix       int
+	Netmask      string `yaml:"mask"`
+	Prefix       int    `yaml:"Prefix"`
 }
 
 func (ip IPv4Addr) Print() {
-	fmt.Printf("%s/%d\n", ip.addr, ip.prefix)
+	fmt.Printf("%s/%d\n", ip.Addr, ip.Prefix)
 }
 func (ip IPv4Addr) assign() (string, bool) {
 	if state == CONF_INT {
-		return fmt.Sprintf("ip address %s %s", ip.addr, ip.netmask), true
+		return fmt.Sprintf("ip address %s %s", ip.Addr, ip.Netmask), true
 	}
 	return "", false
 }
@@ -80,42 +80,42 @@ func NewIpv4(addr string, netmask string) (IPv4Addr, error) {
 		}
 	}
 	return IPv4Addr{
-		addr:         addr,
-		netmask:      netmask,
-		prefix:       prefix,
+		Addr:         addr,
+		Netmask:      netmask,
+		Prefix:       prefix,
 		_addrNumeric: numeric,
 	}, nil
 }
 
 type IPv6Addr struct {
-	addr         string
+	Addr         string `yaml:"ipv6addr"`
 	_addrNumeric [2]int64
-	prefix       int8
+	prefix       int8 `yaml:"prefix"`
 }
 
 func (i *IPv6Addr) assign() (string, bool) {
 	if state == CONF_INT {
-		return fmt.Sprintf("ipv6 address %s/%d", i.addr, i.prefix), true
+		return fmt.Sprintf("ipv6 address %s/%d", i.Addr, i.prefix), true
 	}
 	return "", false
 }
 
 type Interface struct {
-	name          string
-	ipv4Addresses []IPv4Addr
-	ipv6Addresses []IPv6Addr
+	Name          string     `yaml:"id"`
+	Ipv4Addresses []IPv4Addr `yaml:"ipv4,omitempty"`
+	Ipv6Addresses []IPv6Addr `yaml:"ipv6,omitempty"`
 }
 
 func (i *Interface) AddIpv4(addr IPv4Addr) {
-	i.ipv4Addresses = append(i.ipv4Addresses, addr)
+	i.Ipv4Addresses = append(i.Ipv4Addresses, addr)
 }
 func (i *Interface) AddIpv6(addr IPv6Addr) {
-	i.ipv6Addresses = append(i.ipv6Addresses, addr)
+	i.Ipv6Addresses = append(i.Ipv6Addresses, addr)
 }
 
 func (i *Interface) setState() []string {
 	ret := make([]string, 0)
-	for currentInterface != i.name || state != CONF_INT {
+	for currentInterface != i.Name || state != CONF_INT {
 		switch state {
 		case DEFAULT:
 			str, _ := enable()
@@ -126,17 +126,17 @@ func (i *Interface) setState() []string {
 			ret = append(ret, str)
 			break
 		case CONF_T:
-			str, _ := inter(i.name)
+			str, _ := inter(i.Name)
 			ret = append(ret, str)
 			break
 		case CONF_INT:
-			if currentInterface != i.name {
-				str, _ := inter(i.name)
+			if currentInterface != i.Name {
+				str, _ := inter(i.Name)
 				ret = append(ret, str)
 			}
 			break
 		default:
-			str, _ := inter(i.name)
+			str, _ := inter(i.Name)
 			ret = append(ret, str)
 			break
 		}
@@ -146,11 +146,11 @@ func (i *Interface) setState() []string {
 
 func (i *Interface) Configure() (string, error) {
 	ret := i.setState()
-	for _, addr := range i.ipv4Addresses {
+	for _, addr := range i.Ipv4Addresses {
 		str, _ := addr.assign()
 		ret = append(ret, str)
 	}
-	for _, addr := range i.ipv6Addresses {
+	for _, addr := range i.Ipv6Addresses {
 		str, _ := addr.assign()
 		ret = append(ret, str)
 	}
@@ -159,12 +159,11 @@ func (i *Interface) Configure() (string, error) {
 
 func NewInterface(name string) Interface {
 	return Interface{
-		name:          name,
-		ipv4Addresses: make([]IPv4Addr, 0),
-		ipv6Addresses: make([]IPv6Addr, 0),
+		Name:          name,
+		Ipv4Addresses: make([]IPv4Addr, 0),
+		Ipv6Addresses: make([]IPv6Addr, 0),
 	}
 }
 
-type Interfaces struct {
-	interfaces []Interface
+type ACL struct {
 }
