@@ -1,9 +1,10 @@
 package mapping
 
 import (
-	"confdecl/conf"
+	"confdecl/conf/cisco"
 	"gopkg.in/yaml.v2"
 	"os"
+	"strings"
 )
 
 type Conf interface {
@@ -11,15 +12,19 @@ type Conf interface {
 }
 
 type CiscoConf struct {
-	Interfaces []conf.Interface `yaml:"interfaces,omitempty"`
-	ACLs       []conf.ACL       `yaml:"ACLS,omitempty"`
+	Interfaces    []cisco.Interface    `yaml:"interfaces,omitempty"`
+	SubInterfaces []cisco.SubInterface `yaml:"subInterfaces,omitempty"`
+	ACLs          []cisco.ACL          `yaml:"ACLS,omitempty"`
 }
 
-func (c *CiscoConf) AddIface(i conf.Interface) {
+func (c *CiscoConf) AddIface(i cisco.Interface) {
 	c.Interfaces = append(c.Interfaces, i)
 }
-func (c *CiscoConf) AddAcl(a conf.ACL) {
+func (c *CiscoConf) AddAcl(a cisco.ACL) {
 	c.ACLs = append(c.ACLs, a)
+}
+func (c *CiscoConf) AddSubIface(s cisco.SubInterface) {
+	c.SubInterfaces = append(c.SubInterfaces, s)
 }
 
 func (c *CiscoConf) ReadConf(fileName string) error {
@@ -33,4 +38,27 @@ func (c *CiscoConf) ReadConf(fileName string) error {
 	}
 	return nil
 
+}
+
+func (c *CiscoConf) Configure() (string, error) {
+	retList := make([]string, 0)
+	if len(c.ACLs) != 0 && c.ACLs != nil {
+		for _, acl := range c.ACLs {
+			str, err := acl.Configure()
+			if err != nil {
+				return "", err
+			}
+			retList = append(retList, str)
+		}
+	}
+	if len(c.Interfaces) != 0 && c.Interfaces != nil {
+		for _, intf := range c.Interfaces {
+			str, err := intf.Configure()
+			if err != nil {
+				return "", err
+			}
+			retList = append(retList, str)
+		}
+	}
+	return strings.Join(retList, "\n"), nil
 }

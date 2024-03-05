@@ -3,3 +3,6 @@
 
 ########### YAML files ##########
 *.yaml
+
+########### built go file ###########
+confdecl
