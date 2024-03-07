@@ -2,6 +2,7 @@ package mapping
 
 import (
 	"confdecl/conf/cisco"
+	"confdecl/network"
 	"gopkg.in/yaml.v2"
 	"os"
 	"strings"
@@ -9,16 +10,18 @@ import (
 
 type Conf interface {
 	ReadConf(fileName string) error
+	AddIface(i network.InterfaceNetwork)
 }
 
 type CiscoConf struct {
-	Interfaces    []cisco.Interface    `yaml:"interfaces,omitempty"`
-	SubInterfaces []cisco.SubInterface `yaml:"subInterfaces,omitempty"`
-	ACLs          []cisco.ACL          `yaml:"ACLS,omitempty"`
+	Interfaces    []cisco.InterfaceCisco `yaml:"interfaces,omitempty"`
+	SubInterfaces []cisco.SubInterface   `yaml:"subInterfaces,omitempty"`
+	ACLs          []cisco.ACL            `yaml:"ACLS,omitempty"`
 }
 
-func (c *CiscoConf) AddIface(i cisco.Interface) {
-	c.Interfaces = append(c.Interfaces, i)
+func (c *CiscoConf) AddIface(i network.InterfaceNetwork) {
+	ciscoInt := i.(*cisco.InterfaceCisco)
+	c.Interfaces = append(c.Interfaces, *ciscoInt)
 }
 func (c *CiscoConf) AddAcl(a cisco.ACL) {
 	c.ACLs = append(c.ACLs, a)

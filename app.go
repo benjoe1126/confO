@@ -31,8 +31,8 @@ func main() {
 	if len(os.Args) < 2 {
 		fmt.Errorf("%s\n", "No command provided, please provide one of the following commands")
 	} else {
-		str := commands.Commands().Get("apply")
-		strin, err := str(os.Args[1])
+		str := commands.Commands().Get(os.Args[1])
+		strin, err := str(os.Args[2])
 		if err != nil {
 			panic(err)
 		}
