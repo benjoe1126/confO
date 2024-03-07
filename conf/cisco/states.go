@@ -12,6 +12,6 @@ const (
 )
 
 var (
-	state            = DEFAULT
+	State            = DEFAULT
 	currentInterface = ""
 )

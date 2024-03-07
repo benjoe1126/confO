@@ -1,4 +1,4 @@
-package cisco
+package network
 
 import (
 	"fmt"
@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+type IP interface {
+	assign() string
+}
+
 type IPv4Addr struct {
 	Addr         string `yaml:"addr"`
 	_addrNumeric uint32
@@ -14,15 +18,13 @@ type IPv4Addr struct {
 	Prefix       int    `yaml:"prefix"`
 }
 
-func (ip IPv4Addr) Print() {
-	fmt.Printf("%s/%d\n", ip.Addr, ip.Prefix)
+func (ip IPv4Addr) PrintWPrefix() string {
+	return fmt.Sprintf("%s/%d", ip.Addr, ip.Prefix)
 }
-func (ip IPv4Addr) assign() (string, bool) {
-	if state == CONF_INT {
-		return fmt.Sprintf("ip address %s %s", ip.Addr, ip.Netmask), true
-	}
-	return "", false
+func (ip IPv4Addr) PrintWNetmask() string {
+	return fmt.Sprintf("%s %s", ip.Addr, ip.Netmask)
 }
+
 func NewIpv4(addr string, netmask string) (IPv4Addr, error) {
 	prefArr := strings.Split(netmask, ".")
 	prefix := 0
@@ -52,11 +54,8 @@ type IPv6Addr struct {
 	prefix       int8 `yaml:"prefix"`
 }
 
-func (i *IPv6Addr) assign() (string, bool) {
-	if state == CONF_INT {
-		return fmt.Sprintf("ipv6 address %s/%d", i.Addr, i.prefix), true
-	}
-	return "", false
+func (ip IPv6Addr) Print() string {
+	return fmt.Sprintf("%s/%d", ip.Addr, ip.prefix)
 }
 
 func NewIPv6Addr(addr string, prefixlen int8) (IPv6Addr, error) {
