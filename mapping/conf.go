@@ -16,7 +16,7 @@ type Conf interface {
 type CiscoConf struct {
 	Interfaces    []cisco.InterfaceCisco `yaml:"interfaces,omitempty"`
 	SubInterfaces []cisco.SubInterface   `yaml:"subInterfaces,omitempty"`
-	ACLs          []cisco.ACL            `yaml:"ACLS,omitempty"`
+	ACL           []cisco.ACL            `yaml:"acl,omitempty"`
 }
 
 func (c *CiscoConf) AddIface(i network.InterfaceNetwork) {
@@ -24,7 +24,7 @@ func (c *CiscoConf) AddIface(i network.InterfaceNetwork) {
 	c.Interfaces = append(c.Interfaces, *ciscoInt)
 }
 func (c *CiscoConf) AddAcl(a cisco.ACL) {
-	c.ACLs = append(c.ACLs, a)
+	c.ACL = append(c.ACL, a)
 }
 func (c *CiscoConf) AddSubIface(s cisco.SubInterface) {
 	c.SubInterfaces = append(c.SubInterfaces, s)
@@ -45,8 +45,8 @@ func (c *CiscoConf) ReadConf(fileName string) error {
 
 func (c *CiscoConf) Configure() (string, error) {
 	retList := make([]string, 0)
-	if len(c.ACLs) != 0 && c.ACLs != nil {
-		for _, acl := range c.ACLs {
+	if len(c.ACL) != 0 && c.ACL != nil {
+		for _, acl := range c.ACL {
 			str, err := acl.Configure()
 			if err != nil {
 				return "", err
