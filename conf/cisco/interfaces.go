@@ -80,7 +80,7 @@ func (s *SubInterface) AddIpv4(addr network.IPv4Addr) {
 func (s *SubInterface) AddIpv6(addr network.IPv6Addr) {
 	s.Inter.Ipv6Addresses = append(s.Inter.Ipv6Addresses, addr)
 }
-func (s *SubInterface) setState() []string {
+func (s *SubInterface) SetState() []string {
 	return s.Inter.SetState()
 }
 func (s *SubInterface) Configure() (string, error) {

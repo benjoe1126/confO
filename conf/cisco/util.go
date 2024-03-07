@@ -28,3 +28,5 @@ func inter(str string) (string, bool) {
 	}
 	return "", false
 }
+
+//TODO checking state might be pointless, remove later
