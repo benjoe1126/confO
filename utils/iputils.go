@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"math/bits"
 	"strconv"
 	"strings"
@@ -34,6 +35,45 @@ func CalcIpToNumeric(ip string) (uint32, error) {
 
 	}
 	return numeric, nil
+}
+func power(base uint32, pow uint32) uint32 {
+	var result uint32 = 1
+	for pow > 0 {
+		if pow%2 == 0 {
+			pow /= 2
+			base *= base
+		} else {
+			pow -= 1
+			result *= base
+			pow /= 2
+			base *= base
+		}
+	}
+	return result
+}
+
+func PrefixToDottedDecimal(prefix int) string {
+	var bitRep uint32 = 0
+	for i := 1; prefix >= i; i++ {
+		bitRep += power(2, uint32(prefix-i))
+	}
+	fmt.Printf("%b\n", bitRep)
+	mask := uint32(0x000000ff)
+	octets := make([]uint8, 4)
+	for i := 0; 3 > i; i++ {
+		octets[i] = bits.Reverse8(uint8(bitRep & mask))
+		bitRep >>= 8
+	}
+	return fmt.Sprintf("%d.%d.%d.%d", octets[0], octets[1], octets[2], octets[3])
+}
+func ChangeNetmaskToWildcard(netmask string) string {
+	arr := strings.Split(netmask, ".")
+	numarr := []uint8{255, 255, 255, 255}
+	for i, num := range arr {
+		n, _ := strconv.ParseUint(num, 10, 8)
+		numarr[i] -= uint8(n)
+	}
+	return fmt.Sprintf("%d.%d.%d.%d", numarr[3], numarr[2], numarr[1], numarr[0])
 }
 
 func CalcIpv6ToNumeric(ipv6 string) ([]uint64, error) {

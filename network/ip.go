@@ -3,8 +3,6 @@ package network
 import (
 	"confdecl/utils"
 	"fmt"
-	"strconv"
-	"strings"
 )
 
 type IP interface {
@@ -45,7 +43,7 @@ func NewIpv4(addr string, netmask string) (IPv4Addr, error) {
 
 type IPv6Addr struct {
 	Addr         string `yaml:"ipv6addr"`
-	_addrNumeric [2]uint64
+	_addrNumeric []uint64
 	prefix       int8 `yaml:"prefix"`
 }
 
@@ -54,27 +52,10 @@ func (ip IPv6Addr) Print() string {
 }
 
 func NewIPv6Addr(addr string, prefixlen int8) (IPv6Addr, error) {
-	addrSplt := strings.Split(addr, ":")
-	var num1 uint64 = 0
-	var num2 uint64 = 0
-	for i := 0; 4 > i; i++ {
-		num, err := strconv.ParseUint(addrSplt[i], 10, 16)
-		if err != nil {
-			return IPv6Addr{}, err
-		}
-		num2, err := strconv.ParseUint(addrSplt[i+4], 10, 16)
-		if err != nil {
-			return IPv6Addr{}, err
-		}
-		num1 += num
-		num1 = num1 << 16
-		num2 += num2
-		num2 = num2 << 16
-
-	}
+	address, _ := utils.CalcIpv6ToNumeric(addr)
 	return IPv6Addr{
 		Addr:         addr,
-		_addrNumeric: [2]uint64{num1, num2},
+		_addrNumeric: address,
 		prefix:       prefixlen,
 	}, nil
 }
