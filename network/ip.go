@@ -16,15 +16,14 @@ type IPv4Addr struct {
 	Prefix       int8   `yaml:"prefix"`
 }
 
-func (ip IPv4Addr) PrintWPrefix() string {
+func (ip *IPv4Addr) PrintWPrefix() string {
 	return fmt.Sprintf("%s/%d", ip.Addr, ip.Prefix)
 }
-func (ip IPv4Addr) PrintWNetmask() string {
-	netmask := ip.Netmask
-	if netmask == "" {
-		netmask = utils.PrefixToDottedDecimal(int(ip.Prefix))
+func (ip *IPv4Addr) PrintWNetmask() string {
+	if ip.Netmask == "" && ip.Prefix != 0 {
+		ip.Netmask = utils.PrefixToDottedDecimal(int(ip.Prefix))
 	}
-	return fmt.Sprintf("%s %s", ip.Addr, netmask)
+	return fmt.Sprintf("%s %s", ip.Addr, ip.Netmask)
 }
 
 func NewIpv4(addr string, netmask string) (IPv4Addr, error) {
@@ -62,4 +61,16 @@ func NewIPv6Addr(addr string, prefixlen int8) (IPv6Addr, error) {
 		_addrNumeric: address,
 		prefix:       prefixlen,
 	}, nil
+}
+func FromKeywordToIP(source string, keyword string) (IPv4Addr, error) {
+	switch keyword {
+	case "any":
+		return NewIpv4("0.0.0.0", "255.255.255.255")
+	case "host":
+		return NewIpv4(source, "0.0.0.0")
+
+	default:
+
+		return IPv4Addr{}, fmt.Errorf("given keyword: %s is not a vlaid keyword ", keyword)
+	}
 }
