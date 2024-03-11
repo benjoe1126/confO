@@ -57,7 +57,6 @@ func PrefixToDottedDecimal(prefix int) string {
 	for i := 1; prefix >= i; i++ {
 		bitRep += power(2, uint32(prefix-i))
 	}
-	fmt.Printf("%b\n", bitRep)
 	mask := uint32(0x000000ff)
 	octets := make([]uint8, 4)
 	for i := 0; 3 > i; i++ {
@@ -73,7 +72,7 @@ func ChangeNetmaskToWildcard(netmask string) string {
 		n, _ := strconv.ParseUint(num, 10, 8)
 		numarr[i] -= uint8(n)
 	}
-	return fmt.Sprintf("%d.%d.%d.%d", numarr[3], numarr[2], numarr[1], numarr[0])
+	return fmt.Sprintf("%d.%d.%d.%d", numarr[0], numarr[1], numarr[2], numarr[3])
 }
 
 func CalcIpv6ToNumeric(ipv6 string) ([]uint64, error) {
