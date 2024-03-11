@@ -1,6 +1,8 @@
 package comfunc
 
-import "confdecl/mapping"
+import (
+	"confdecl/mapping"
+)
 
 func Apply(fname string) (string, error) {
 	cconf := mapping.CiscoConf{}

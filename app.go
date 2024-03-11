@@ -2,7 +2,6 @@ package main
 
 import (
 	"confdecl/commands"
-	"confdecl/utils"
 	"fmt"
 	"os"
 )
@@ -38,7 +37,6 @@ func main() {
 			panic(err)
 		}
 		fmt.Println(strin)
-		fmt.Println(utils.PrefixToDottedDecimal(17))
 	} /*
 		g0 := cisco.NewInterface("g0/0/0")
 		ipv4, _ := network.NewIpv4("192.168.1.1", "255.255.255.0")
