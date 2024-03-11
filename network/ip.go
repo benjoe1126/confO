@@ -20,7 +20,11 @@ func (ip IPv4Addr) PrintWPrefix() string {
 	return fmt.Sprintf("%s/%d", ip.Addr, ip.Prefix)
 }
 func (ip IPv4Addr) PrintWNetmask() string {
-	return fmt.Sprintf("%s %s", ip.Addr, ip.Netmask)
+	netmask := ip.Netmask
+	if netmask == "" {
+		netmask = utils.PrefixToDottedDecimal(int(ip.Prefix))
+	}
+	return fmt.Sprintf("%s %s", ip.Addr, netmask)
 }
 
 func NewIpv4(addr string, netmask string) (IPv4Addr, error) {
