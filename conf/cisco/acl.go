@@ -33,43 +33,6 @@ func newRule(src string, dst string, protocol string, port int, seq int) Rule {
 	}
 
 }
-func (r *Rule) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	type defaultConf struct {
-		Source      string `yaml:"source"`
-		Destination string `yaml:"destination,omitempty"`
-		Protocol    string `yaml:"protocol,omitempty"`
-		Port        int    `yaml:"port"`
-		SeqNum      int    `yaml:"seqNum,omitempty"`
-	}
-	var o defaultConf
-	err := unmarshal(&o)
-	if err != nil {
-		return fmt.Errorf("error parsing Rule %w", err)
-	}
-	ipSrc, err := searchKeyword(o.Source)
-	if err != nil {
-		return err
-	}
-	if ipSrc.Prefix == -1 {
-		ipSrc = strToIpv4(o.Source)
-	}
-	r.Source = ipSrc
-	r.Protocol = o.Protocol
-	r.Port = o.Port
-	r.SeqNum = utils.Max(o.SeqNum, 5)
-	if o.Destination == "" {
-		return nil
-	}
-	ipDst, err := searchKeyword(o.Destination)
-	if err != nil {
-		return err
-	}
-	if ipDst.Prefix == -1 {
-		ipDst = strToIpv4(o.Destination)
-	}
-	r.Destination = ipDst
-	return nil
-}
 
 type ACL struct {
 	Number int    `yaml:"number,omitempty"`
@@ -86,34 +49,6 @@ func NewAcl(num int, name string) ACL {
 		Permit: make([]Rule, 0),
 		Deny:   make([]Rule, 0),
 	}
-}
-
-// TODO fix this shit with the seq numbers
-func (acl *ACL) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	type tempAcl struct {
-		Number int    `yaml:"number,omitempty"`
-		Name   string `yaml:"name,omitempty"`
-		Permit []Rule `yaml:"permit,omitempty"`
-		Deny   []Rule `yaml:"deny,omitempty"`
-	}
-	var tmp tempAcl
-	err := unmarshal(&tmp)
-	if err != nil {
-		return fmt.Errorf("cant unmarshal ACL %w", err)
-	}
-	acl.Number = tmp.Number
-	acl.Name = tmp.Name
-	if len(tmp.Permit) == 0 && len(tmp.Permit) == 0 {
-		return fmt.Errorf("acl should have at least one rules")
-	}
-	for _, permit := range tmp.Permit {
-		acl.PermitRule(permit)
-	}
-	for _, deny := range tmp.Deny {
-		acl.DenyRule(deny)
-	}
-	acl.Print()
-	return nil
 }
 
 func foundAndMax(r []Rule, seq int) (bool, int) {
