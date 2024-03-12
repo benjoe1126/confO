@@ -3,6 +3,7 @@ package mapping
 import (
 	"confdecl/conf/cisco"
 	"confdecl/network"
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"os"
 	"strings"
@@ -25,6 +26,14 @@ func (c *CiscoConf) AddIface(i network.InterfaceNetwork) {
 }
 func (c *CiscoConf) AddAcl(a cisco.ACL) {
 	c.ACL = append(c.ACL, a)
+}
+func (c *CiscoConf) GetAcl(name string, num int) (cisco.ACL, error) {
+	for _, acl := range c.ACL {
+		if (acl.Name == name && name != "") || (acl.Number == num && num != 0) {
+			return acl, nil
+		}
+	}
+	return cisco.ACL{}, fmt.Errorf("acl name: %s num: %d not found, inavlid interface config", name, num)
 }
 func (c *CiscoConf) AddSubIface(s cisco.SubInterface) {
 	c.SubInterfaces = append(c.SubInterfaces, s)

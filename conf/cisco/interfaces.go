@@ -6,10 +6,16 @@ import (
 	"strings"
 )
 
+type aclInt struct {
+	ACLApplied ACL
+	Direction  string
+}
+
 type InterfaceCisco struct {
 	Name          string             `yaml:"id"`
 	Ipv4Addresses []network.IPv4Addr `yaml:"ipv4,omitempty"`
 	Ipv6Addresses []network.IPv6Addr `yaml:"ipv6,omitempty"`
+	ACLApplied    []aclInt           `yaml:"acl,omitempty"`
 }
 
 func (i *InterfaceCisco) AddIpv4(addr network.IPv4Addr) {
@@ -17,6 +23,9 @@ func (i *InterfaceCisco) AddIpv4(addr network.IPv4Addr) {
 }
 func (i *InterfaceCisco) AddIpv6(addr network.IPv6Addr) {
 	i.Ipv6Addresses = append(i.Ipv6Addresses, addr)
+}
+func (i *InterfaceCisco) AddAcl(acl ACL, dir string) {
+	i.ACLApplied = append(i.ACLApplied, aclInt{ACLApplied: acl, Direction: dir})
 }
 
 func (i *InterfaceCisco) SetState() []string {
