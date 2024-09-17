@@ -36,26 +36,11 @@ func CalcIpToNumeric(ip string) (uint32, error) {
 	}
 	return numeric, nil
 }
-func power(base uint32, pow uint32) uint32 {
-	var result uint32 = 1
-	for pow > 0 {
-		if pow%2 == 0 {
-			pow /= 2
-			base *= base
-		} else {
-			pow -= 1
-			result *= base
-			pow /= 2
-			base *= base
-		}
-	}
-	return result
-}
 
 func PrefixToDottedDecimal(prefix int) string {
 	var bitRep uint32 = 0
 	for i := 1; prefix >= i; i++ {
-		bitRep += power(2, uint32(prefix-i))
+		bitRep += Power(2, uint32(prefix-i))
 	}
 	mask := uint32(0x000000ff)
 	octets := make([]uint8, 4)

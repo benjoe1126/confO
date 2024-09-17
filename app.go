@@ -2,7 +2,11 @@ package main
 
 import (
 	"confdecl/commands"
+	"confdecl/conf/cisco"
+	"confdecl/mapping"
+	"confdecl/network"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"os"
 )
 
@@ -37,33 +41,33 @@ func main() {
 			panic(err)
 		}
 		fmt.Println(strin)
-	} /*
-		g0 := cisco.NewInterface("g0/0/0")
-		ipv4, _ := network.NewIpv4("192.168.1.1", "255.255.255.0")
-		g0.AddIpv4(ipv4)
-		ivp4_2, _ := network.NewIpv4("172.16.0.6", "255.252.0.0")
-		g0.AddIpv4(ivp4_2)
-		//cnf, _ := g0.Configure()
-		g1 := cisco.NewInterface("g0/0/1")
-		ipv4, _ = network.NewIpv4("10.0.0.24", "255.0.0.0")
-		g1.AddIpv4(ipv4)
-		//cnf2, _ := g1.Configure()
-		//fmt.Println(cnf)
-		cconf := mapping.CiscoConf{}
-		cconf.AddIface(&g0)
-		cconf.AddIface(&g1)
-		sub, _ := cisco.NewSubinterface("g0/0/1.2", 2)
-		str, err := sub.Configure()
-		if err != nil {
-			panic(err)
-		}
-		strr, _ := yaml.Marshal(cconf)
-		fmt.Println(string(strr))
-		fmt.Println(str)
-		cconf.AddSubIface(sub)
+	}
+	g0 := cisco.NewInterface("g0/0/0")
+	ipv4, _ := network.NewIpv4("192.168.1.1", "255.255.255.0")
+	g0.AddIpv4(ipv4)
+	ivp4_2, _ := network.NewIpv4("172.16.0.6", "255.252.0.0")
+	g0.AddIpv4(ivp4_2)
+	//cnf, _ := g0.Configure()
+	g1 := cisco.NewInterface("g0/0/1")
+	ipv4, _ = network.NewIpv4("10.0.0.24", "255.0.0.0")
+	g1.AddIpv4(ipv4)
+	//cnf2, _ := g1.Configure()
+	//fmt.Println(cnf)
+	cconf := mapping.CiscoConf{}
+	cconf.AddIface(&g0)
+	cconf.AddIface(&g1)
+	sub, _ := cisco.NewSubinterface("g0/0/1.2", 2)
+	str, err := sub.Configure()
+	if err != nil {
+		panic(err)
+	}
+	strr, _ := yaml.Marshal(cconf)
+	fmt.Println(string(strr))
+	fmt.Println(str)
+	cconf.AddSubIface(sub)
 
-		str, err = g0.Configure()
-		fmt.Println(str)*/
+	str, err = g0.Configure()
+	fmt.Println(str)
 
 }
 
