@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-//Rule unmarshal
+// Rule unmarshal
 func (r *Rule) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type defaultConf struct {
 		Source      string `yaml:"source"`
@@ -47,8 +47,8 @@ func (r *Rule) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
-// TODO fix this shit with the seq numbers
-//Unmarshal ACL-s
+// TODO fix problem with sequence numbers
+// Unmarshal ACL-s
 func (acl *ACL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type tempAcl struct {
 		Number int    `yaml:"number,omitempty"`
@@ -72,7 +72,6 @@ func (acl *ACL) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	for _, deny := range tmp.Deny {
 		acl.DenyRule(deny)
 	}
-	acl.Print()
 	return nil
 }
 
